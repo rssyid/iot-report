@@ -1,0 +1,342 @@
+[
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "1",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "MER",
+    "est_alias": "THP1",
+    "est_complete": "Meranti",
+    "order": "1"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "1",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "RAM",
+    "est_alias": "THP2",
+    "est_complete": "Ramin",
+    "order": "2"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "1",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "KEP",
+    "est_alias": "THP3",
+    "est_complete": "Kempas",
+    "order": "3"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "1",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "EBO",
+    "est_alias": "THP4",
+    "est_complete": "Eboni",
+    "order": "4"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "1",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "TEB",
+    "est_alias": "THP5",
+    "est_complete": "Tembusu",
+    "order": "5"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "SUN",
+    "est_alias": "THP6",
+    "est_complete": "Sungkai",
+    "order": "6"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "NAS",
+    "est_alias": "THP7",
+    "est_complete": "Nagasari",
+    "order": "7"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "MHO",
+    "est_alias": "THP8",
+    "est_complete": "Mahoni",
+    "order": "8"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "SEN",
+    "est_alias": "THP9",
+    "est_complete": "Sentigi",
+    "order": "9"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "PUL",
+    "est_alias": "THP10",
+    "est_complete": "Pulai",
+    "order": "10"
+  },
+  {
+    "Region": "Region 1 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "2",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "CEN",
+    "est_alias": "THP11",
+    "est_complete": "Cendana",
+    "order": "11"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "3",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "SEG",
+    "est_alias": "THP12",
+    "est_complete": "Sengkawang",
+    "order": "12"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "3",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "NYA",
+    "est_alias": "THP13",
+    "est_complete": "Nyato",
+    "order": "13"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "3",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "JAT",
+    "est_alias": "THP14",
+    "est_complete": "Jati",
+    "order": "14"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "3",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "BEL",
+    "est_alias": "THP15",
+    "est_complete": "Belian",
+    "order": "15"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "3",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "KEM",
+    "est_alias": "THP16",
+    "est_complete": "Kemuning",
+    "order": "16"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "4",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "TAY",
+    "est_alias": "THP17",
+    "est_complete": "Tayuman",
+    "order": "17"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "4",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "BIT",
+    "est_alias": "THP18",
+    "est_complete": "Bintangur",
+    "order": "18"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "4",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "MAG",
+    "est_alias": "THP19",
+    "est_complete": "Mahang",
+    "order": "19"
+  },
+  {
+    "Region": "Region 2 THIP",
+    "company_code": "PT.THIP",
+    "wilayah": "4",
+    "company_name": "PT TH Indo Plantations",
+    "est_code": "AGT",
+    "est_alias": "THP20",
+    "est_complete": "Agatis",
+    "order": "20"
+  },
+  {
+    "Region": "Region 1 Non THIP",
+    "company_code": "PT.JJP",
+    "wilayah": "",
+    "company_name": "PT Jatim Jaya Perkasa",
+    "est_code": "JJP1",
+    "est_alias": "KSB",
+    "est_complete": "Sungai Bangko",
+    "order": "1"
+  },
+  {
+    "Region": "Region 1 Non THIP",
+    "company_code": "PT.JJP",
+    "wilayah": "",
+    "company_name": "PT Jatim Jaya Perkasa",
+    "est_code": "JJP2",
+    "est_alias": "KSR",
+    "est_complete": "Sungai Rokan",
+    "order": "2"
+  },
+  {
+    "Region": "Region 1 Non THIP",
+    "company_code": "PT.JJP",
+    "wilayah": "",
+    "company_name": "PT Jatim Jaya Perkasa",
+    "est_code": "JJP3",
+    "est_alias": "KSD",
+    "est_complete": "Simpang Damar",
+    "order": "3"
+  },
+  {
+    "Region": "Kalbar A",
+    "company_code": "PT.PTW",
+    "wilayah": "",
+    "company_name": "PT Patiware",
+    "est_code": "PTW1",
+    "est_alias": "KSA",
+    "est_complete": "Sungai Adong",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar A",
+    "company_code": "PT.PTW",
+    "wilayah": "",
+    "company_name": "PT Patiware",
+    "est_code": "PTW2",
+    "est_alias": "KST",
+    "est_complete": "Sungai Talo",
+    "order": "2"
+  },
+  {
+    "Region": "Kalbar A",
+    "company_code": "PT.PANPS",
+    "wilayah": "",
+    "company_name": "PT Perkebunan Negeri Anak Pasaman - Sambas",
+    "est_code": "PNP1",
+    "est_alias": "KPE",
+    "est_complete": "Perigi Maram",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar A",
+    "company_code": "PT.SAM",
+    "wilayah": "",
+    "company_name": "PT Sentosa Asih Makmur",
+    "est_code": "SAM",
+    "est_alias": "KSN",
+    "est_complete": "Sungai Nante",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.GAN",
+    "wilayah": "",
+    "company_name": "PT Graha Agro Nusantara",
+    "est_code": "GAN1",
+    "est_alias": "KSY",
+    "est_complete": "Sedayu",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.GAN",
+    "wilayah": "",
+    "company_name": "PT Graha Agro Nusantara",
+    "est_code": "GAN2",
+    "est_alias": "KTR",
+    "est_complete": "Terindak",
+    "order": "2"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.GAN",
+    "wilayah": "",
+    "company_name": "PT Graha Agro Nusantara",
+    "est_code": "GAN3",
+    "est_alias": "KBQ",
+    "est_complete": "Sungai Benuaq",
+    "order": "3"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.BAS",
+    "wilayah": "",
+    "company_name": "PT Bumi Asih Sentosa",
+    "est_code": "BAS",
+    "est_alias": "KSU",
+    "est_complete": "Sungai Rasau",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.NJP",
+    "wilayah": "",
+    "company_name": "PT Nusa Jaya Perkasa",
+    "est_code": "NJP",
+    "est_alias": "KAB",
+    "est_complete": "Ambangah",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.PLDK",
+    "wilayah": "",
+    "company_name": "PT Putra Lirik Domas - Kuburaya",
+    "est_code": "PLD2",
+    "est_alias": "KRJ",
+    "est_complete": "Rasau Jaya",
+    "order": "1"
+  },
+  {
+    "Region": "Kalbar B",
+    "company_code": "PT.SUMK",
+    "wilayah": "",
+    "company_name": "PT Sumatera Unggul Makmur - Kuburaya",
+    "est_code": "SUM2",
+    "est_alias": "KNP",
+    "est_complete": "Sungai Nipah",
+    "order": "1"
+  }
+]
