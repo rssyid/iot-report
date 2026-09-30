@@ -20,6 +20,9 @@ import {
   Building2,
   X,
   ExternalLink,
+  Eye,
+  EyeOff,
+  Columns,
 } from "lucide-react";
 import ExcelJS from "exceljs";
 
@@ -130,6 +133,11 @@ export default function ReportIotPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
+
+  // Column Visibility States for Screenshot & Custom View (WIL, STATUS TANAM, IDL)
+  const [showWil, setShowWil] = useState(true);
+  const [showStatusTanam, setShowStatusTanam] = useState(true);
+  const [showIdl, setShowIdl] = useState(true);
 
   // Modal Add Block
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -706,6 +714,55 @@ export default function ReportIotPage() {
           ))}
         </div>
 
+        {/* Column Visibility Selector (Hide / Show WIL, STATUS TANAM, IDL) */}
+        <div className="flex items-center gap-1.5 flex-wrap bg-slate-100 border-2 border-black rounded-xl p-1.5 px-3 shadow-[2px_2px_0px_0px_#000]">
+          <span className="text-[11px] font-black uppercase text-slate-700 flex items-center gap-1 mr-1">
+            <Columns className="h-3.5 w-3.5 text-black" />
+            Kolom:
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowWil((prev) => !prev)}
+            className={`px-2.5 py-1 rounded-lg border-2 border-black text-[11px] font-black uppercase transition flex items-center gap-1 ${
+              showWil
+                ? "bg-[#00E599] text-black shadow-[1.5px_1.5px_0px_0px_#000]"
+                : "bg-slate-200 text-slate-400 border-slate-400 line-through opacity-75 shadow-none"
+            }`}
+            title={showWil ? "Klik untuk sembunyikan kolom WIL" : "Klik untuk tampilkan kolom WIL"}
+          >
+            {showWil ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 text-slate-500" />}
+            WIL
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowStatusTanam((prev) => !prev)}
+            className={`px-2.5 py-1 rounded-lg border-2 border-black text-[11px] font-black uppercase transition flex items-center gap-1 ${
+              showStatusTanam
+                ? "bg-[#00E599] text-black shadow-[1.5px_1.5px_0px_0px_#000]"
+                : "bg-slate-200 text-slate-400 border-slate-400 line-through opacity-75 shadow-none"
+            }`}
+            title={showStatusTanam ? "Klik untuk sembunyikan kolom STATUS TANAM" : "Klik untuk tampilkan kolom STATUS TANAM"}
+          >
+            {showStatusTanam ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 text-slate-500" />}
+            STATUS TANAM
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowIdl((prev) => !prev)}
+            className={`px-2.5 py-1 rounded-lg border-2 border-black text-[11px] font-black uppercase transition flex items-center gap-1 ${
+              showIdl
+                ? "bg-[#00E599] text-black shadow-[1.5px_1.5px_0px_0px_#000]"
+                : "bg-slate-200 text-slate-400 border-slate-400 line-through opacity-75 shadow-none"
+            }`}
+            title={showIdl ? "Klik untuk sembunyikan kolom IDL" : "Klik untuk tampilkan kolom IDL"}
+          >
+            {showIdl ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3 text-slate-500" />}
+            IDL
+          </button>
+        </div>
+
         {/* Unsaved status badge */}
         <div>
           {hasUnsavedChanges ? (
@@ -791,21 +848,27 @@ export default function ReportIotPage() {
                 <th rowSpan={2} className="py-2.5 px-2 text-center border-r border-black/40 w-10">
                   No
                 </th>
-                <th rowSpan={2} className="py-2.5 px-2 text-center border-r border-black/40 w-12">
-                  Wil
-                </th>
+                {showWil && (
+                  <th rowSpan={2} className="py-2.5 px-2 text-center border-r border-black/40 w-12">
+                    Wil
+                  </th>
+                )}
                 <th rowSpan={2} className="py-2.5 px-3 text-center border-r border-black/40 w-16">
                   Estate
                 </th>
                 <th rowSpan={2} className="py-2.5 px-3 text-center border-r border-black/40 w-16">
                   Block
                 </th>
-                <th rowSpan={2} className="py-2.5 px-2.5 text-center border-r border-black/40 w-20">
-                  Status Tanam
-                </th>
-                <th rowSpan={2} className="py-2.5 px-2 text-center border-r border-black/40 w-14">
-                  IDL
-                </th>
+                {showStatusTanam && (
+                  <th rowSpan={2} className="py-2.5 px-2.5 text-center border-r border-black/40 w-20">
+                    Status Tanam
+                  </th>
+                )}
+                {showIdl && (
+                  <th rowSpan={2} className="py-2.5 px-2 text-center border-r border-black/40 w-14">
+                    IDL
+                  </th>
+                )}
                 <th rowSpan={2} className="py-2.5 px-3 text-center border-r-2 border-black w-24">
                   Tgl survey
                 </th>
@@ -870,14 +933,20 @@ export default function ReportIotPage() {
             <tbody className="divide-y divide-black/20 font-bold text-slate-900">
               {isLoading ? (
                 <tr>
-                  <td colSpan={15 + weeks.length * 2} className="py-16 text-center text-slate-500">
+                  <td
+                    colSpan={12 + (showWil ? 1 : 0) + (showStatusTanam ? 1 : 0) + (showIdl ? 1 : 0) + weeks.length * 2}
+                    className="py-16 text-center text-slate-500"
+                  >
                     <RefreshCw className="h-7 w-7 animate-spin mx-auto mb-2 text-black" />
                     <span className="text-xs font-black">Menghitung dan memuat data telemetri laporan...</span>
                   </td>
                 </tr>
               ) : blocks.length === 0 ? (
                 <tr>
-                  <td colSpan={15 + weeks.length * 2} className="py-16 text-center text-slate-400">
+                  <td
+                    colSpan={12 + (showWil ? 1 : 0) + (showStatusTanam ? 1 : 0) + (showIdl ? 1 : 0) + weeks.length * 2}
+                    className="py-16 text-center text-slate-400"
+                  >
                     Belum ada blok pantauan untuk {companyCode}. Klik tombol <strong>"Tambah Blok Pantauan"</strong> di atas.
                   </td>
                 </tr>
@@ -893,14 +962,16 @@ export default function ReportIotPage() {
                       </td>
 
                       {/* Wilayah */}
-                      <td className="py-2.5 px-2 text-center border-r border-slate-200">
-                        <input
-                          type="number"
-                          value={b.wilayah}
-                          onChange={(e) => handleBlockFieldChange(b.id, "wilayah", Number(e.target.value))}
-                          className="w-8 text-center bg-transparent border-b border-transparent hover:border-black focus:border-black focus:outline-none"
-                        />
-                      </td>
+                      {showWil && (
+                        <td className="py-2.5 px-2 text-center border-r border-slate-200">
+                          <input
+                            type="number"
+                            value={b.wilayah}
+                            onChange={(e) => handleBlockFieldChange(b.id, "wilayah", Number(e.target.value))}
+                            className="w-8 text-center bg-transparent border-b border-transparent hover:border-black focus:border-black focus:outline-none"
+                          />
+                        </td>
+                      )}
 
                       {/* Estate */}
                       <td className="py-2.5 px-3 text-center border-r border-slate-200 font-mono font-black text-blue-900">
@@ -928,32 +999,37 @@ export default function ReportIotPage() {
                       </td>
 
                       {/* Status Tanam */}
-                      <td className="py-2.5 px-2 border-r border-slate-200 text-center">
-                        <select
-                          value={b.statusTanam}
-                          onChange={(e) => handleBlockFieldChange(b.id, "statusTanam", e.target.value)}
-                          className="bg-transparent text-[11px] font-bold text-center border-b border-transparent hover:border-black focus:outline-none cursor-pointer"
-                        >
-                          <option value="Muda">Muda</option>
-                          <option value="Rehab">Rehab</option>
-                          <option value="TM">TM</option>
-                          <option value="TBM">TBM</option>
-                        </select>
-                      </td>
+                      {showStatusTanam && (
+                        <td className="py-2.5 px-2 border-r border-slate-200 text-center">
+                          <select
+                            value={b.statusTanam}
+                            onChange={(e) => handleBlockFieldChange(b.id, "statusTanam", e.target.value)}
+                            className="bg-transparent text-[11px] font-bold text-center border-b border-transparent hover:border-black focus:outline-none cursor-pointer"
+                          >
+                            <option value="Muda">Muda</option>
+                            <option value="Rehab">Rehab</option>
+                            <option value="TM">TM</option>
+                            <option value="TBM">TBM</option>
+                            <option value="Tua">Tua</option>
+                          </select>
+                        </td>
+                      )}
 
                       {/* IDL */}
-                      <td className="py-2.5 px-2 border-r border-slate-200 text-center">
-                        <select
-                          value={b.idl}
-                          onChange={(e) => handleBlockFieldChange(b.id, "idl", e.target.value)}
-                          className={`text-[11px] font-black text-center border-b border-transparent hover:border-black focus:outline-none cursor-pointer ${
-                            b.idl === "Sudah" ? "text-emerald-700" : "text-amber-700"
-                          }`}
-                        >
-                          <option value="Sudah">Sudah</option>
-                          <option value="Belum">Belum</option>
-                        </select>
-                      </td>
+                      {showIdl && (
+                        <td className="py-2.5 px-2 border-r border-slate-200 text-center">
+                          <select
+                            value={b.idl}
+                            onChange={(e) => handleBlockFieldChange(b.id, "idl", e.target.value)}
+                            className={`text-[11px] font-black text-center border-b border-transparent hover:border-black focus:outline-none cursor-pointer ${
+                              b.idl === "Sudah" ? "text-emerald-700" : "text-amber-700"
+                            }`}
+                          >
+                            <option value="Sudah">Sudah</option>
+                            <option value="Belum">Belum</option>
+                          </select>
+                        </td>
+                      )}
 
                       {/* Tgl Survey */}
                       <td className="py-2.5 px-2 border-r-2 border-black text-center font-mono text-[11px] text-slate-700">
@@ -1168,6 +1244,7 @@ export default function ReportIotPage() {
                     <option value="Rehab">Rehab</option>
                     <option value="TM">TM</option>
                     <option value="TBM">TBM</option>
+                    <option value="Tua">Tua</option>
                   </select>
                 </div>
                 <div>
@@ -1433,6 +1510,7 @@ export default function ReportIotPage() {
                     <option value="Rehab">Rehab</option>
                     <option value="TM">TM</option>
                     <option value="TBM">TBM</option>
+                    <option value="Tua">Tua</option>
                   </select>
                 </div>
                 <div>
