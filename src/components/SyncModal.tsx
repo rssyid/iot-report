@@ -120,7 +120,6 @@ export default function SyncModal({
           endDate,
           companyCodes: selectedCompanies,
           arsiran,
-          async: true,
         }),
       });
 
@@ -130,14 +129,14 @@ export default function SyncModal({
       }
 
       setResult(data);
-      setProgressMsg("Sinkronisasi dimulai di background...");
+      setProgressMsg("Sinkronisasi berhasil!");
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("iot:sync-complete"));
       }
       onSuccess();
       setTimeout(() => {
         onClose();
-      }, 700);
+      }, 1500);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);

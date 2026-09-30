@@ -5,6 +5,7 @@ import { tmatSyncBatches } from "@/db/schema";
 import { desc } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 // GET /api/tmat/sync
 // Returns latest sync batches and real-time total record summary
@@ -74,48 +75,32 @@ export async function POST(req: Request) {
       if (devCountRes?.count) targetDeviceCount = devCountRes.count;
     } catch {}
 
-    const isFullSync = !deviceIds || deviceIds.length > 5;
-
-    if (isFullSync) {
-      // Create batch record with accurate deviceCount
-      const [batch] = await db
-        .insert(tmatSyncBatches)
-        .values({
-          requestedStartDate: startDate || `${new Date().getFullYear()}-01-01`,
-          requestedEndDate: endDate || new Date().toISOString().split("T")[0],
-          deviceCount: targetDeviceCount,
-          status: "running",
-        })
-        .returning();
-
-      // Trigger sync in background
-      runTMATSync({
-        startDate,
-        endDate,
-        deviceIds,
-        companyCodes,
-        batchId: batch.id,
-      }).catch((err) => {
-        console.error("Background TMAT sync error:", err);
-      });
-
-      return NextResponse.json({
-        message: "Sinkronisasi TMAT dimulai di background",
-        batchId: batch.id,
-        status: "running",
+    // Create batch record with accurate deviceCount
+    const [batch] = await db
+      .insert(tmatSyncBatches)
+      .values({
+        requestedStartDate: startDate || `${new Date().getFullYear()}-01-01`,
+        requestedEndDate: endDate || new Date().toISOString().split("T")[0],
         deviceCount: targetDeviceCount,
-      });
-    } else {
-      // Small sync, wait for result
-      const result = await runTMATSync({
-        startDate,
-        endDate,
-        deviceIds,
-        companyCodes,
-      });
+        status: "running",
+      })
+      .returning();
 
-      return NextResponse.json({ data: result });
-    }
+    // Await execution directly with concurrency 8 so Vercel Serverless Function does not freeze/kill the task
+    const result = await runTMATSync({
+      startDate,
+      endDate,
+      deviceIds,
+      companyCodes,
+      concurrency: 8,
+      batchId: batch.id,
+    });
+
+    return NextResponse.json({
+      message: "Sinkronisasi TMAT selesai",
+      data: result,
+      ...result,
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -57,11 +57,18 @@ export default function TmatSyncModal({
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Gagal memulai sinkronisasi");
 
+      setResultMsg({
+        type: "success",
+        text: `Sinkronisasi TMAT berhasil! ${json.data?.totalRows ? `${json.data.totalRows.toLocaleString("id-ID")} baris data tersimpan.` : ""}`,
+      });
+
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("iot:sync-complete"));
       }
       onSuccess();
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
     } catch (err: any) {
       setResultMsg({
         type: "error",
