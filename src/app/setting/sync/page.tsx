@@ -80,6 +80,8 @@ export default function SettingSyncPage() {
   const [rainBatches, setRainBatches] = useState<RainBatch[]>([]);
   const [tmatBatches, setTmatBatches] = useState<TmatBatch[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLocalSyncingRain, setIsLocalSyncingRain] = useState(false);
+  const [isLocalSyncingTmat, setIsLocalSyncingTmat] = useState(false);
 
   const loadInfo = async () => {
     setIsRefreshing(true);
@@ -144,12 +146,32 @@ export default function SettingSyncPage() {
   useEffect(() => {
     loadInfo();
 
+    const handleSyncStarted = (e: any) => {
+      const type = e.detail?.type;
+      if (type === "rainfall") setIsLocalSyncingRain(true);
+      if (type === "tmat") setIsLocalSyncingTmat(true);
+    };
+
     const handleSyncComplete = () => {
+      setIsLocalSyncingRain(false);
+      setIsLocalSyncingTmat(false);
       loadInfo();
     };
+
+    const handleSyncError = (e: any) => {
+      setIsLocalSyncingRain(false);
+      setIsLocalSyncingTmat(false);
+      loadInfo();
+    };
+
+    window.addEventListener("iot:sync-started", handleSyncStarted);
     window.addEventListener("iot:sync-complete", handleSyncComplete);
+    window.addEventListener("iot:sync-error", handleSyncError);
+
     return () => {
+      window.removeEventListener("iot:sync-started", handleSyncStarted);
       window.removeEventListener("iot:sync-complete", handleSyncComplete);
+      window.removeEventListener("iot:sync-error", handleSyncError);
     };
   }, []);
 
@@ -269,35 +291,34 @@ export default function SettingSyncPage() {
           </div>
 
           {/* Live Progress Banner when running */}
-          {runningRainBatch && (
+          {(runningRainBatch || isLocalSyncingRain) && (
             <div className="p-4 bg-amber-50 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_#000] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2 font-black text-xs uppercase text-amber-950">
                   <RefreshCw className="h-4 w-4 animate-spin text-amber-800" />
-                  Proses Sinkronisasi Curah Hujan Sedang Berjalan di Background...
+                  Proses Sinkronisasi Curah Hujan Sedang Berjalan...
                 </span>
                 <span className="text-xs font-black font-mono">
-                  {runningRainBatch.successCount} / {runningRainBatch.companyCount} Request (
-                  {runningRainBatch.companyCount > 0
-                    ? Math.round((runningRainBatch.successCount / runningRainBatch.companyCount) * 100)
-                    : 0}
-                  %)
+                  {runningRainBatch
+                    ? `${runningRainBatch.successCount} / ${runningRainBatch.companyCount} Request (${runningRainBatch.companyCount > 0 ? Math.round((runningRainBatch.successCount / runningRainBatch.companyCount) * 100) : 0}%)`
+                    : "Menyinkronkan data..."}
                 </span>
               </div>
               <div className="w-full bg-slate-200 border border-black rounded-full h-3 overflow-hidden">
                 <div
                   className="bg-[#00E599] h-full transition-all duration-300"
                   style={{
-                    width: `${
-                      runningRainBatch.companyCount > 0
-                        ? (runningRainBatch.successCount / runningRainBatch.companyCount) * 100
-                        : 5
-                    }%`,
+                    width:
+                      runningRainBatch && runningRainBatch.companyCount > 0
+                        ? `${(runningRainBatch.successCount / runningRainBatch.companyCount) * 100}%`
+                        : "70%",
                   }}
                 />
               </div>
               <p className="text-[11px] font-bold text-slate-600">
-                {runningRainBatch.totalRows.toLocaleString("id-ID")} baris data harian telah berhasil disimpan. Halaman ini akan otomatis diperbarui.
+                {runningRainBatch
+                  ? `${runningRainBatch.totalRows.toLocaleString("id-ID")} baris data harian telah berhasil disimpan. Halaman ini akan otomatis diperbarui.`
+                  : "Menarik data telemetri dari web service ASP.NET dan menyimpan ke Neon PostgreSQL..."}
               </p>
             </div>
           )}
@@ -486,35 +507,34 @@ export default function SettingSyncPage() {
           </div>
 
           {/* Live Progress Banner when running */}
-          {runningBatch && (
+          {(runningBatch || isLocalSyncingTmat) && (
             <div className="p-4 bg-amber-50 border-2 border-black rounded-xl shadow-[3px_3px_0px_0px_#000] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2 font-black text-xs uppercase text-amber-950">
                   <RefreshCw className="h-4 w-4 animate-spin text-amber-800" />
-                  Proses Sinkronisasi TMAT Sedang Berjalan di Background...
+                  Proses Sinkronisasi TMAT Sedang Berjalan...
                 </span>
                 <span className="text-xs font-black font-mono">
-                  {runningBatch.successCount} / {runningBatch.deviceCount} Device (
-                  {runningBatch.deviceCount > 0
-                    ? Math.round((runningBatch.successCount / runningBatch.deviceCount) * 100)
-                    : 0}
-                  %)
+                  {runningBatch
+                    ? `${runningBatch.successCount} / ${runningBatch.deviceCount} Device (${runningBatch.deviceCount > 0 ? Math.round((runningBatch.successCount / runningBatch.deviceCount) * 100) : 0}%)`
+                    : "Menyinkronkan 94 sensor..."}
                 </span>
               </div>
               <div className="w-full bg-slate-200 border border-black rounded-full h-3 overflow-hidden">
                 <div
                   className="bg-[#00E599] h-full transition-all duration-300"
                   style={{
-                    width: `${
-                      runningBatch.deviceCount > 0
-                        ? (runningBatch.successCount / runningBatch.deviceCount) * 100
-                        : 5
-                    }%`,
+                    width:
+                      runningBatch && runningBatch.deviceCount > 0
+                        ? `${(runningBatch.successCount / runningBatch.deviceCount) * 100}%`
+                        : "70%",
                   }}
                 />
               </div>
               <p className="text-[11px] font-bold text-slate-600">
-                {runningBatch.totalRows.toLocaleString("id-ID")} titik rekaman jam telah berhasil disimpan. Halaman ini akan otomatis diperbarui.
+                {runningBatch
+                  ? `${runningBatch.totalRows.toLocaleString("id-ID")} titik rekaman jam telah berhasil disimpan. Halaman ini akan otomatis diperbarui.`
+                  : "Menarik data fluktuasi air per jam piezometer Holykell dan menyimpan ke Neon PostgreSQL..."}
               </p>
             </div>
           )}

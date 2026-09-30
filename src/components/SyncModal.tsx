@@ -106,21 +106,27 @@ export default function SyncModal({
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-    setProgressMsg("Memulai sinkronisasi data dari endpoint IoT ASP.NET...");
+    const payload = {
+      startDate,
+      endDate,
+      companyCodes: selectedCompanies,
+      arsiran,
+    };
+
+    // Close modal immediately so user is not blocked
+    onClose();
 
     try {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("iot:sync-started", { detail: { type: "rainfall" } })
+        );
+      }
+
       const res = await fetch("/api/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          startDate,
-          endDate,
-          companyCodes: selectedCompanies,
-          arsiran,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -128,21 +134,18 @@ export default function SyncModal({
         throw new Error(data.error || "Gagal melakukan sinkronisasi");
       }
 
-      setResult(data);
-      setProgressMsg("Sinkronisasi berhasil!");
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("iot:sync-complete"));
+        window.dispatchEvent(new CustomEvent("iot:sync-complete", { detail: data }));
       }
       onSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1500);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      setError(msg);
-      setProgressMsg("");
-    } finally {
-      setIsLoading(false);
+      console.error("Rainfall sync error:", msg);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("iot:sync-error", { detail: { type: "rainfall", error: msg } })
+        );
+      }
     }
   };
 

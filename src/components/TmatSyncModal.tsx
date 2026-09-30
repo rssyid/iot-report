@@ -37,16 +37,21 @@ export default function TmatSyncModal({
   if (!isOpen) return null;
 
   const handleStartSync = async () => {
-    setIsLoading(true);
-    setResultMsg(null);
+    const payload: Record<string, any> = {};
+    if (syncMode === "CUSTOM") {
+      payload.startDate = startDate;
+      payload.endDate = endDate;
+    }
+
+    // Close modal immediately so user is not blocked
+    onClose();
 
     try {
-      const payload: Record<string, any> = {};
-      if (syncMode === "CUSTOM") {
-        payload.startDate = startDate;
-        payload.endDate = endDate;
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("iot:sync-started", { detail: { type: "tmat" } })
+        );
       }
-      // If AUTO, startDate is omitted -> backend auto-detects empty dates from MAX(record_date)
 
       const res = await fetch("/api/tmat/sync", {
         method: "POST",
@@ -57,25 +62,17 @@ export default function TmatSyncModal({
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Gagal memulai sinkronisasi");
 
-      setResultMsg({
-        type: "success",
-        text: `Sinkronisasi TMAT berhasil! ${json.data?.totalRows ? `${json.data.totalRows.toLocaleString("id-ID")} baris data tersimpan.` : ""}`,
-      });
-
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("iot:sync-complete"));
+        window.dispatchEvent(new CustomEvent("iot:sync-complete", { detail: json }));
       }
       onSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1500);
     } catch (err: any) {
-      setResultMsg({
-        type: "error",
-        text: err.message,
-      });
-    } finally {
-      setIsLoading(false);
+      console.error("TMAT sync error:", err);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("iot:sync-error", { detail: { type: "tmat", error: err.message } })
+        );
+      }
     }
   };
 
