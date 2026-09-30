@@ -405,7 +405,7 @@ export default function ReportIotPage() {
     return groups;
   }, [weeks]);
 
-  // Export Excel
+  // Export Excel with complete cell merging and column width formatting
   const handleExportExcel = async () => {
     if (blocks.length === 0) return;
     setIsExporting(true);
@@ -419,60 +419,169 @@ export default function ReportIotPage() {
         views: [{ showGridLines: true }],
       });
 
+      // Build dynamic column definitions based on visibility (showWil, showStatusTanam, showIdl)
+      interface ColDef {
+        key: string;
+        header1: string;
+        header2?: string;
+        width: number;
+        align: "center" | "left" | "right";
+        valign?: "top" | "middle";
+        wrapText?: boolean;
+        isRowSpan?: boolean;
+      }
+
+      const colDefs: ColDef[] = [];
+
+      // 1. Initial Fixed Columns
+      colDefs.push({ key: "no", header1: "No", width: 6, align: "center", isRowSpan: true });
+      if (showWil) {
+        colDefs.push({ key: "wil", header1: "Wil", width: 7, align: "center", isRowSpan: true });
+      }
+      colDefs.push({ key: "estate", header1: "Estate", width: 10, align: "center", isRowSpan: true });
+      colDefs.push({ key: "block", header1: "Block", width: 10, align: "center", isRowSpan: true });
+      if (showStatusTanam) {
+        colDefs.push({ key: "statusTanam", header1: "Status Tanam", width: 14, align: "center", isRowSpan: true });
+      }
+      if (showIdl) {
+        colDefs.push({ key: "idl", header1: "IDL", width: 9, align: "center", isRowSpan: true });
+      }
+      colDefs.push({ key: "tglSurvey", header1: "Tgl survey", width: 13, align: "center", isRowSpan: true });
+
+      const fixedColCount = colDefs.length;
+
+      // 2. Weekly Columns
+      weeks.forEach((w) => {
+        colDefs.push({
+          key: `w_${w.id}_ch`,
+          header1: "",
+          header2: `W${w.week} CH`,
+          width: 10,
+          align: "center",
+        });
+        colDefs.push({
+          key: `w_${w.id}_tmat`,
+          header1: "",
+          header2: `W${w.week} TMAT`,
+          width: 11,
+          align: "center",
+        });
+      });
+
+      // 3. Post-weekly Columns
+      colDefs.push({
+        key: "selisih",
+        header1: "Selisih Mingguan (cm)",
+        width: 16,
+        align: "center",
+        isRowSpan: true,
+      });
+      colDefs.push({
+        key: "pic",
+        header1: "PIC",
+        width: 18,
+        align: "left",
+        isRowSpan: true,
+      });
+      colDefs.push({
+        key: "rekomendasi",
+        header1: "Rekomendasi",
+        width: 36,
+        align: "left",
+        valign: "top",
+        wrapText: true,
+        isRowSpan: true,
+      });
+      colDefs.push({
+        key: "targetPlan",
+        header1: "Target Plan",
+        width: 36,
+        align: "left",
+        valign: "top",
+        wrapText: true,
+        isRowSpan: true,
+      });
+      colDefs.push({
+        key: "progressLast",
+        header1: "Progress Perbaikan",
+        header2: "Last Week",
+        width: 11,
+        align: "center",
+      });
+      colDefs.push({
+        key: "progressThis",
+        header1: "",
+        header2: "This Week",
+        width: 11,
+        align: "center",
+      });
+
+      const totalCols = colDefs.length;
+
       // Title rows
-      sheet.addRow([`LAPORAN MONITORING MUKA AIR TANAH (TMAT) & CURAH HUJAN`]);
-      sheet.addRow([`Company: ${companyCode} | Periode: ${weeksCount} Minggu Terakhir`]);
+      const rTitle = sheet.addRow([`LAPORAN MONITORING MUKA AIR TANAH (TMAT) & CURAH HUJAN`]);
+      rTitle.font = { bold: true, size: 12 };
+      rTitle.alignment = { horizontal: "left", vertical: "middle" };
+
+      const rSub = sheet.addRow([`Company: ${companyCode} | Periode: ${weeksCount} Minggu Terakhir`]);
+      rSub.font = { bold: true, size: 10, color: { argb: "FF475569" } };
+      rSub.alignment = { horizontal: "left", vertical: "middle" };
+
       sheet.addRow([]);
 
-      // Row 4: Top Level Header
-      const headerRow1 = [
-        "No",
-        "Wil",
-        "Estate",
-        "Block",
-        "Status Tanam",
-        "IDL",
-        "Tgl survey",
-      ];
+      // Row 4: Top Level Header and Row 5: Subheader
+      const headerRow1Data: string[] = [];
+      const headerRow2Data: string[] = [];
 
-      // Add months headers
+      colDefs.forEach((col) => {
+        headerRow1Data.push(col.header1);
+        headerRow2Data.push(col.header2 || "");
+      });
+
+      // Populate Month headers in Header 1
+      let currentWeekColIndex = fixedColCount;
       groupedMonths.forEach((gm) => {
-        headerRow1.push(`${gm.monthName} ${gm.year}`);
-        // Add blanks for colspan
-        for (let i = 1; i < gm.weeks.length * 2; i++) {
-          headerRow1.push("");
+        const monthColsSpan = gm.weeks.length * 2;
+        headerRow1Data[currentWeekColIndex] = `${gm.monthName} ${gm.year}`;
+        currentWeekColIndex += monthColsSpan;
+      });
+
+      const r1 = sheet.addRow(headerRow1Data);
+      const r2 = sheet.addRow(headerRow2Data);
+
+      r1.height = 24;
+      r2.height = 22;
+
+      // Merge Cells for Headers (Row 4 & Row 5)
+      colDefs.forEach((col, idx) => {
+        const colNum = idx + 1;
+        if (col.isRowSpan) {
+          sheet.mergeCells(4, colNum, 5, colNum);
         }
       });
 
-      headerRow1.push("Selisih Mingguan (cm)", "PIC", "Rekomendasi", "Target Plan", "Progress Perbaikan", "");
-      const r1 = sheet.addRow(headerRow1);
-
-      // Row 5: Subheader
-      const headerRow2 = [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-      ];
-
-      weeks.forEach((w) => {
-        headerRow2.push(`W${w.week} CH`, `W${w.week} TMAT`);
+      let mColStart = fixedColCount + 1;
+      groupedMonths.forEach((gm) => {
+        const span = gm.weeks.length * 2;
+        const mColEnd = mColStart + span - 1;
+        if (mColEnd > mColStart) {
+          sheet.mergeCells(4, mColStart, 4, mColEnd);
+        }
+        mColStart += span;
       });
 
-      headerRow2.push("", "", "", "", "Last Week", "This Week");
-      const r2 = sheet.addRow(headerRow2);
+      const progressColStart = totalCols - 1;
+      const progressColEnd = totalCols;
+      sheet.mergeCells(4, progressColStart, 4, progressColEnd);
 
-      // Styling headers (Dark Red #990000 matching Image 1)
+      // Styling headers (Dark Red #990000 matching web)
       [r1, r2].forEach((row) => {
-        row.eachCell((cell) => {
+        row.eachCell({ includeEmpty: true }, (cell) => {
           cell.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 9 };
           cell.fill = {
             type: "pattern",
             pattern: "solid",
-            fgColor: { argb: "FFB91C1C" }, // Red header
+            fgColor: { argb: "FF990000" }, // Marun #990000
           };
           cell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
           cell.border = {
@@ -484,34 +593,36 @@ export default function ReportIotPage() {
         });
       });
 
-      // Add Data Rows
+      // Add Data Rows (Row 6 onwards)
       blocks.forEach((b, idx) => {
-        const rowData = [
-          idx + 1,
-          b.wilayah,
-          b.estate,
-          b.block,
-          b.statusTanam,
-          b.idl,
-          b.tglSurvey || "-",
-        ];
+        const rowData: any[] = [];
 
+        rowData.push(idx + 1);
+        if (showWil) rowData.push(b.wilayah);
+        rowData.push(b.estate);
+        rowData.push(b.block);
+        if (showStatusTanam) rowData.push(b.statusTanam);
+        if (showIdl) rowData.push(b.idl);
+        rowData.push(b.tglSurvey ? b.tglSurvey.split("T")[0] : "-");
+
+        // Weekly values
         b.weeklyData.forEach((w) => {
           rowData.push(w.ch !== null ? w.ch : "-");
           rowData.push(w.tmat !== null ? w.tmat : "no data");
         });
 
-        rowData.push(
-          b.selisihMingguan.diffLabel,
-          b.pic,
-          b.rekomendasi,
-          b.targetPlan,
-          b.progressLastWeek,
-          b.progressThisWeek
-        );
+        rowData.push(b.selisihMingguan.diffLabel);
+        rowData.push(b.pic || "-");
+        rowData.push(b.rekomendasi || "-");
+        rowData.push(b.targetPlan || "-");
+        rowData.push(b.progressLastWeek);
+        rowData.push(b.progressThisWeek);
 
-        const row = sheet.addRow(rowData);
-        row.eachCell((cell, colNumber) => {
+        const dataRow = sheet.addRow(rowData);
+        dataRow.height = 26;
+
+        dataRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+          const colDef = colDefs[colNumber - 1];
           cell.font = { size: 9 };
           cell.border = {
             top: { style: "thin", color: { argb: "FFD1D5DB" } },
@@ -519,15 +630,16 @@ export default function ReportIotPage() {
             bottom: { style: "thin", color: { argb: "FFD1D5DB" } },
             right: { style: "thin", color: { argb: "FFD1D5DB" } },
           };
-          cell.alignment = { vertical: "middle" };
 
-          // Alignment rules
-          if (colNumber <= 7) cell.alignment = { horizontal: "center", vertical: "middle" };
-          if (colNumber > 7 && colNumber <= 7 + weeks.length * 2) {
-            cell.alignment = { horizontal: "center", vertical: "middle" };
+          cell.alignment = {
+            horizontal: colDef ? colDef.align : "center",
+            vertical: colDef && colDef.valign ? colDef.valign : "middle",
+            wrapText: colDef ? !!colDef.wrapText : false,
+          };
 
-            // Check if this is a TMAT column (even offset)
-            const weekOffset = colNumber - 8;
+          // Weekly TMAT cell coloring
+          if (colNumber > fixedColCount && colNumber <= fixedColCount + weeks.length * 2) {
+            const weekOffset = colNumber - fixedColCount - 1;
             if (weekOffset % 2 === 1) {
               const weekIdx = Math.floor(weekOffset / 2);
               const tVal = b.weeklyData[weekIdx]?.tmat;
@@ -546,9 +658,8 @@ export default function ReportIotPage() {
           }
 
           // Selisih Mingguan color
-          const selisihColIndex = 8 + weeks.length * 2;
-          if (colNumber === selisihColIndex) {
-            cell.alignment = { horizontal: "center", vertical: "middle" };
+          const selisihColNum = fixedColCount + weeks.length * 2 + 1;
+          if (colNumber === selisihColNum) {
             const diffCol = getDiffColor(b.selisihMingguan.category);
             cell.fill = {
               type: "pattern",
@@ -561,28 +672,13 @@ export default function ReportIotPage() {
               size: 9,
             };
           }
-
-          // PIC & Recommendation & Plan formatting
-          if (colNumber === selisihColIndex + 1) cell.alignment = { horizontal: "left", vertical: "middle" };
-          if (colNumber === selisihColIndex + 2 || colNumber === selisihColIndex + 3) {
-            cell.alignment = { horizontal: "left", vertical: "top", wrapText: true };
-          }
-          if (colNumber >= selisihColIndex + 4) {
-            cell.alignment = { horizontal: "center", vertical: "middle" };
-          }
         });
       });
 
-      // Auto fit columns width
-      sheet.columns.forEach((col) => {
-        col.width = 12;
+      // Apply Column Widths
+      colDefs.forEach((col, idx) => {
+        sheet.getColumn(idx + 1).width = col.width;
       });
-      if (sheet.columns[2]) sheet.columns[2].width = 8;
-      if (sheet.columns[3]) sheet.columns[3].width = 10;
-      const selIdx = 7 + weeks.length * 2;
-      if (sheet.columns[selIdx + 1]) sheet.columns[selIdx + 1].width = 18; // PIC
-      if (sheet.columns[selIdx + 2]) sheet.columns[selIdx + 2].width = 25; // Rekomendasi
-      if (sheet.columns[selIdx + 3]) sheet.columns[selIdx + 3].width = 25; // Target Plan
 
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
