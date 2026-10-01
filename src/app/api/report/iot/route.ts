@@ -216,10 +216,10 @@ export async function GET(req: Request) {
 
             if (tmatLast > 45 && diffVal > 7) {
               diffColorCategory = "cepat"; // Merah
-            } else if (tmatLast <= 45 && diffVal >= -7 && diffVal <= 0) {
-              diffColorCategory = "lambat"; // Kuning
+            } else if (tmatLast <= 45 && diffVal > 0 && diffVal <= 7) {
+              diffColorCategory = "lambat"; // Kuning: hanya bila air surut lambat (1 s.d 7 cm)
             } else {
-              diffColorCategory = "normal"; // Hijau
+              diffColorCategory = "normal"; // Hijau: air naik (▲), seimbang, atau dinamika normal
             }
           }
         }

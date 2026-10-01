@@ -923,7 +923,7 @@ export default function ReportIotPage() {
             </div>
             <div className="p-1.5 rounded border border-black bg-[#FFE600] text-black text-center">
               <span className="block font-black">Terlalu Lambat (Kuning)</span>
-              <span>TMAT &le; 45 & Turun lambat (-7 s.d 0)</span>
+              <span>TMAT &le; 45 & Turun lambat (1 s.d 7 cm)</span>
             </div>
             <div className="p-1.5 rounded border border-black bg-[#22C55E] text-black text-center">
               <span className="block font-black">Normal (Hijau)</span>
